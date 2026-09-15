@@ -36,7 +36,7 @@ class SimpleExpressionSolver() {
                 while(stackForChar.count()>0 && stackForChar.peek() != '(')
                     postfixExpression.append(stackForChar.pop())
                 stackForChar.pop()
-            }else throw Exception()
+            }else throw IllegalArgumentException("Неизвестный оператор: ${it}")
             prev = it
         }
         while (stackForChar.isNotEmpty()) {
@@ -56,7 +56,7 @@ class SimpleExpressionSolver() {
                     '+' -> b+a
                     '-' -> b-a
                     '*' -> b*a
-                    '/' -> { if (b == 0) throw ArithmeticException("Деление на ноль"); b/a }
+                    '/' -> { if (a == 0) throw ArithmeticException("Деление на ноль"); b/a }
                     '^' -> { if (b < 0) throw ArithmeticException("Отрицательная степень"); a.toDouble().pow(b).toInt() }
                     else -> throw IllegalArgumentException("Неизвестный оператор: ${it}")
                 }
@@ -70,7 +70,7 @@ class SimpleExpressionSolver() {
         try {
             return answer(toPostfixExpression(expression)).toString()
         }catch (e: Exception) {
-            return e.toString()
+            return e.message!!
         }
     }
 }
