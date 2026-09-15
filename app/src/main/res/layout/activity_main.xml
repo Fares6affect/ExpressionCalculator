@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    \
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="Калькулятор"
+        app:titleCentered="true"
+        app:subtitle="Допустимые операции: +*"
+        app:subtitleCentered="true"
+        />
+
+    <EditText
+        android:id="@+id/expressionView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="36dp"
+        android:paddingHorizontal="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:hint="Введите выражение"
+        android:singleLine="true"
+        android:imeOptions="actionDone|flagNoPersonalizedLearning"
+        android:background="@drawable/expression_back"
+        />
+    <TextView
+        android:id="@+id/answerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="30dp"
+        android:gravity="center"/>
+
+</LinearLayout>
