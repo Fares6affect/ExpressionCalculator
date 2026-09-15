@@ -17,7 +17,6 @@ class SimpleExpressionSolver() {
         '^' to 3
         )
 
-    @Throws(Exception::class)
     fun toPostfixExpression(expression: String):String{
         var postfixExpression = StringBuilder()
         var prev: Char? = null
