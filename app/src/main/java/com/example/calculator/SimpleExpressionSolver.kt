@@ -49,13 +49,13 @@ class SimpleExpressionSolver() {
             if(it.isDigit())
                 stackForInt.push(it.digitToInt())
             else {
-                val a = stackForInt.pop()
                 val b = stackForInt.pop()
+                val a = stackForInt.pop()
                 val c = when (it) {
-                    '+' -> b+a
-                    '-' -> b-a
-                    '*' -> b*a
-                    '/' -> { if (a == 0) throw ArithmeticException("Деление на ноль"); b/a }
+                    '+' -> a+b
+                    '-' -> a-b
+                    '*' -> a*b
+                    '/' -> { if (b == 0) throw ArithmeticException("Деление на ноль"); a/b }
                     '^' -> { if (b < 0) throw ArithmeticException("Отрицательная степень"); a.toDouble().pow(b).toInt() }
                     else -> throw IllegalArgumentException("Неизвестный оператор: ${it}")
                 }
