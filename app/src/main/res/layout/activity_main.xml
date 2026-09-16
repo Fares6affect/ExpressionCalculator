@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         app:title="Калькулятор"
         app:titleCentered="true"
-        app:subtitle="Допустимые операции: +*"
         app:subtitleCentered="true"
         />
 
