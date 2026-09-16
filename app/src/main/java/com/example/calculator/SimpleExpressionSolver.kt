@@ -1,5 +1,6 @@
 package com.example.calculator
 
+import androidx.core.text.isDigitsOnly
 import java.util.Dictionary
 import java.util.Stack
 import kotlin.jvm.Throws
@@ -8,6 +9,7 @@ import kotlin.math.pow
 class SimpleExpressionSolver() {
     private var stackForInt = Stack<Int>()
     private var stackForChar = Stack<Char>()
+    private var stackForDouble = Stack<Double>()
     private val dictionary = mapOf(
         '(' to 0,
         '+' to 1,
@@ -18,56 +20,71 @@ class SimpleExpressionSolver() {
         )
 
     fun toPostfixExpression(expression: String):String{
+        if(expression.equals(""))
+            throw Exception("Пустая строка")
         var postfixExpression = StringBuilder()
-        var prev: Char? = null
-        expression.forEach {
-            if(it.isDigit())
-                postfixExpression.append(it)
-            else if(it=='^'||it=='(')
-                stackForChar.push(it)
-            else if(dictionary.containsKey(it)){
-                if(it=='-' && (prev==null||prev=='('))
-                    postfixExpression.append('0')
-                while(stackForChar.count()>0 && (dictionary.getValue(stackForChar.peek())>=dictionary.getValue(it)))
-                    postfixExpression.append(stackForChar.pop())
-                stackForChar.push(it)
-            } else if(it==')'){
-                while(stackForChar.count()>0 && stackForChar.peek() != '(')
-                    postfixExpression.append(stackForChar.pop())
-                stackForChar.pop()
-            }else throw IllegalArgumentException("Неизвестный оператор: ${it}")
-            prev = it
-        }
-        while (stackForChar.isNotEmpty()) {
-            postfixExpression.append(stackForChar.pop())
-        }
-        return postfixExpression.toString()
-    }
+        var indexStart = 0
+        for(index in expression.indices){
+            val c = expression.get(index)
+            if(c.isDigit()||c=='.')
+                continue
+            else{
+                if(indexStart!=index)
+                    postfixExpression.append(" ")
+                        .append(expression.substring(indexStart,index))
+                indexStart=index+1
+                if(c=='^'||c=='(')
+                    stackForChar.push(c)
+                else if(dictionary.containsKey(c)){
+                    if(c=='-' && (index==0||expression.get(index-1)=='(')) {
+                        postfixExpression.append(" 0")
 
-    fun answer(postfixExpression: String):Int{
-        postfixExpression.forEach {
-            if(it.isDigit())
-                stackForInt.push(it.digitToInt())
-            else {
-                val b = stackForInt.pop()
-                val a = stackForInt.pop()
-                val c = when (it) {
-                    '+' -> a+b
-                    '-' -> a-b
-                    '*' -> a*b
-                    '/' -> { if (b == 0) throw ArithmeticException("Деление на ноль"); a/b }
-                    '^' -> { if (b < 0) throw ArithmeticException("Отрицательная степень"); a.toDouble().pow(b).toInt() }
-                    else -> throw IllegalArgumentException("Неизвестный оператор: ${it}")
-                }
-                stackForInt.push(c)
+                    }
+                    while(stackForChar.count()>0 && (dictionary.getValue(stackForChar.peek())>=dictionary.getValue(c)))
+                        postfixExpression.append(" ")
+                            .append(stackForChar.pop())
+                    stackForChar.push(c)
+                } else if(c==')'){
+                    while(stackForChar.count()>0 && stackForChar.peek() != '(')
+                        postfixExpression.append(" ")
+                            .append(stackForChar.pop())
+                    stackForChar.pop()
+                }else throw IllegalArgumentException("Неизвестный оператор: ${c}")
             }
         }
-        return stackForInt.pop()
+        postfixExpression.append(" ")
+            .append(expression.substring(indexStart))
+        while (stackForChar.isNotEmpty()) {
+            postfixExpression.append(" ").append(stackForChar.pop())
+        }
+        return postfixExpression.toString().trim()
+    }
+
+    fun answer(postfixExpression: String): Double{
+        postfixExpression.split(" ").forEach {
+            if(!"+-*/^".contains(it))
+                stackForDouble.push(it.toDouble())
+            else {
+                val b = stackForDouble.pop()
+                val a = stackForDouble.pop()
+                val c = when (it) {
+                    "+" -> a+b
+                    "-" -> a-b
+                    "*" -> a*b
+                    "/" -> { if (b == 0.0) throw ArithmeticException("Деление на ноль"); a/b }
+                    else -> { if (b < 0) throw ArithmeticException("Отрицательная степень"); a.pow(b)}
+                }
+                stackForDouble.push(c)
+            }
+        }
+        return stackForDouble.pop()
     }
 
     fun resolve(expression: String):String{
         try {
-            return answer(toPostfixExpression(expression)).toString()
+            return answer(toPostfixExpression(expression.replace(" ",""))).toString()
+            //return toPostfixExpression(expression.replace(" ","")).toString().replace(" ","!")
+
         }catch (e: Exception) {
             return e.message!!
         }
