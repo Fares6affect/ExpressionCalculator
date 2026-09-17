@@ -1,15 +1,9 @@
 package com.example.calculator
 
-import androidx.core.text.isDigitsOnly
-import java.util.Dictionary
 import java.util.Stack
-import kotlin.jvm.Throws
 import kotlin.math.pow
 
 class SimpleExpressionSolver() {
-    private var stackForInt = Stack<Int>()
-    private var stackForChar = Stack<Char>()
-    private var stackForDouble = Stack<Double>()
     private val dictionary = mapOf(
         '(' to 0,
         '+' to 1,
@@ -19,8 +13,9 @@ class SimpleExpressionSolver() {
         '^' to 3
         )
 
-    fun toPostfixExpression(expression: String):String{
-        if(expression.equals(""))
+    fun toPostfixExpression(expression: String?):String{
+        var stackForChar = Stack<Char>()
+        if(expression.isNullOrEmpty())
             throw Exception("Пустая строка")
         var postfixExpression = StringBuilder()
         var indexStart = 0
@@ -61,6 +56,7 @@ class SimpleExpressionSolver() {
     }
 
     fun answer(postfixExpression: String): Double{
+        var stackForDouble = Stack<Double>()
         postfixExpression.split(" ").forEach {
             if(!"+-*/^".contains(it))
                 stackForDouble.push(it.toDouble())
@@ -80,11 +76,10 @@ class SimpleExpressionSolver() {
         return stackForDouble.pop()
     }
 
-    fun resolve(expression: String):String{
+    fun resolve(expression: String?):String{
         try {
+            if(expression==null) throw Exception("Передано null значение")
             return answer(toPostfixExpression(expression.replace(" ",""))).toString()
-            //return toPostfixExpression(expression.replace(" ","")).toString().replace(" ","!")
-
         }catch (e: Exception) {
             return e.message!!
         }
